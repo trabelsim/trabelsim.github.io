@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>trabelsim — robotics &amp; applied AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #0a1e3b;
+    --navy-2: #0f2a52;
+    --panel: #123a68;
+    --line: #6f9dc9;
+    --line-dim: #345a83;
+    --paper: #e9f2fb;
+    --paper-dim: #a9c3dd;
+    --cyan: #5fd4ff;
+    --amber: #ffb454;
+    --grid: rgba(111,157,201,0.14);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--navy);
+    color:var(--paper);
+    font-family:'Inter', sans-serif;
+    line-height:1.5;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px;}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--cyan);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:18px; height:1px;
+    background:var(--cyan);
+    display:inline-block;
+  }
+
+  /* NAV */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:26px 28px;
+    max-width:1080px; margin:0 auto;
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+  }
+  nav .mark{color:var(--paper); letter-spacing:0.02em; font-weight:500;}
+  nav .mark span{color:var(--cyan);}
+  nav a.gh{
+    display:flex; align-items:center; gap:7px;
+    color:var(--paper-dim);
+    text-decoration:none;
+    border:1px solid var(--line-dim);
+    padding:7px 14px;
+    border-radius:3px;
+    transition: border-color .2s, color .2s;
+  }
+  nav a.gh:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  /* HERO */
+  .hero{
+    padding:56px 0 70px;
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:20px;
+    align-items:center;
+  }
+  .hero h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:clamp(42px, 7vw, 68px);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+    margin:14px 0 18px;
+  }
+  .hero p.lede{
+    font-size:17px;
+    color:var(--paper-dim);
+    max-width:46ch;
+    margin-bottom:26px;
+  }
+  .stamp{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--paper-dim);
+    border:1px solid var(--line-dim);
+    padding:9px 14px;
+    border-radius:3px;
+  }
+  .stamp b{color:var(--paper); font-weight:500;}
+  .stamp .sep{color:var(--line-dim);}
+
+  .rig{ width:100%; }
+  .rig svg{ width:100%; height:auto; overflow:visible; }
+  .rig .draw{
+    stroke-dasharray: 900;
+    stroke-dashoffset: 900;
+    animation: draw 2.1s ease forwards;
+  }
+  .rig .draw.d2{ animation-delay:.15s; }
+  .rig .draw.d3{ animation-delay:.3s; }
+  .rig .fade{ opacity:0; animation: fadein .6s ease forwards; animation-delay: 1.7s; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes fadein{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .rig .draw{ stroke-dashoffset:0; animation:none; }
+    .rig .fade{ opacity:1; animation:none; }
+  }
+
+  /* SECTIONS */
+  section{ padding:54px 0; border-top:1px solid var(--line-dim); }
+  section h2{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:28px;
+    margin:10px 0 34px;
+    font-weight:700;
+  }
+
+  .interests{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:1px;
+    background:var(--line-dim);
+    border:1px solid var(--line-dim);
+  }
+  .interest{
+    background:var(--navy);
+    padding:26px;
+  }
+  .interest .num{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--line);
+  }
+  .interest h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:19px;
+    margin:12px 0 8px;
+  }
+  .interest p{ color:var(--paper-dim); font-size:14.5px; }
+
+  .projects{ display:flex; flex-direction:column; }
+  .project{
+    display:grid;
+    grid-template-columns: 1fr auto auto 22px;
+    gap:20px;
+    align-items:start;
+    padding:20px 0;
+    border-bottom:1px solid var(--line-dim);
+    text-decoration:none;
+    color:inherit;
+    transition:background .15s;
+  }
+  .project:hover{ background:rgba(95,212,255,0.05); }
+  .project .info h3{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:17px;
+    margin-bottom:5px;
+  }
+  .project .info p{ color:var(--paper-dim); font-size:14px; max-width:56ch; }
+  .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:var(--paper-dim);
+    border:1px solid var(--line-dim);
+    border-radius:3px;
+    padding:4px 9px;
+    white-space:nowrap;
+    height:fit-content;
+  }
+  .stars{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    color:var(--amber);
+    white-space:nowrap;
+  }
+  .arrow{ color:var(--line); }
+
+  /* FOOTER */
+  footer{
+    padding:50px 0 60px;
+    border-top:1px solid var(--line-dim);
+  }
+  .badges{
+    display:flex; gap:12px; flex-wrap:wrap;
+    margin-bottom:34px;
+  }
+  .badge{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--paper-dim);
+    border:1px solid var(--line-dim);
+    border-radius:20px;
+    padding:7px 13px;
+  }
+  .badge svg{ width:14px; height:14px; stroke:var(--cyan); fill:none; }
+
+  .cta{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px;
+  }
+  .cta a{
+    font-family:'JetBrains Mono', monospace;
+    font-size:14px;
+    text-decoration:none;
+    color:var(--navy);
+    background:var(--cyan);
+    padding:13px 22px;
+    border-radius:3px;
+    font-weight:500;
+    transition:opacity .2s;
+  }
+  .cta a:hover{ opacity:.86; }
+  .cta .fine{ color:var(--paper-dim); font-size:13px; font-family:'JetBrains Mono', monospace; }
+
+  @media (max-width:760px){
+    .hero{ grid-template-columns:1fr; }
+    .rig{ order:-1; max-width:340px; margin:0 auto 10px; }
+    .interests{ grid-template-columns:1fr; }
+    .project{ grid-template-columns:1fr; }
+    .stars, .tag{ justify-self:start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="mark">trabelsi<span>m</span></div>
+  <a class="gh" href="https://github.com/trabelsim" target="_blank" rel="noopener">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+    github.com/trabelsim
+  </a>
+</nav>
+
+<header class="wrap hero">
+  <div>
+    <div class="eyebrow">Wrocław, Poland</div>
+    <h1>Building the<br>eyes and arms<br>of machines.</h1>
+    <p class="lede">Robotics engineer working the seam between perception and motion — cobots that follow instructions, models that see what's in front of them, and agents that act on it.</p>
+    <div class="stamp">
+      <b>21</b> repositories <span class="sep">/</span> <b>robotics</b> <span class="sep">·</span> <b>vision</b> <span class="sep">·</span> <b>agents</b>
+    </div>
+  </div>
+
+  <div class="rig">
+    <svg viewBox="0 0 360 340" fill="none">
+      <!-- base plate -->
+      <rect x="110" y="286" width="140" height="14" rx="2" class="draw" stroke="var(--line)" stroke-width="2"/>
+      <line x1="130" y1="300" x2="120" y2="316" class="draw" stroke="var(--line-dim)" stroke-width="1.5"/>
+      <line x1="230" y1="300" x2="240" y2="316" class="draw" stroke="var(--line-dim)" stroke-width="1.5"/>
+
+      <!-- arm segments -->
+      <circle cx="180" cy="270" r="9" class="draw" stroke="var(--cyan)" stroke-width="2"/>
+      <line x1="180" y1="270" x2="150" y2="190" class="draw d2" stroke="var(--line)" stroke-width="2"/>
+      <circle cx="150" cy="190" r="7" class="draw d2" stroke="var(--cyan)" stroke-width="2"/>
+      <line x1="150" y1="190" x2="210" y2="130" class="draw d2" stroke="var(--line)" stroke-width="2"/>
+      <circle cx="210" cy="130" r="7" class="draw d2" stroke="var(--cyan)" stroke-width="2"/>
+      <line x1="210" y1="130" x2="200" y2="70" class="draw d3" stroke="var(--line)" stroke-width="2"/>
+      <circle cx="200" cy="70" r="6" class="draw d3" stroke="var(--cyan)" stroke-width="2"/>
+
+      <!-- gripper -->
+      <line x1="200" y1="70" x2="185" y2="42" class="draw d3" stroke="var(--line)" stroke-width="2"/>
+      <line x1="200" y1="70" x2="220" y2="46" class="draw d3" stroke="var(--line)" stroke-width="2"/>
+
+      <!-- joint labels -->
+      <g class="fade" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--paper-dim)">
+        <text x="192" y="274">J1</text>
+        <text x="118" y="188">J2</text>
+        <text x="220" y="122">J3</text>
+        <text x="212" y="62">J4</text>
+      </g>
+
+      <!-- dimension lines -->
+      <g class="fade" stroke="var(--line-dim)" stroke-width="1" stroke-dasharray="3 3">
+        <line x1="270" y1="286" x2="270" y2="70"/>
+        <line x1="264" y1="286" x2="276" y2="286"/>
+        <line x1="264" y1="70" x2="276" y2="70"/>
+      </g>
+      <text class="fade" x="278" y="180" font-family="JetBrains Mono, monospace" font-size="10" fill="var(--paper-dim)" transform="rotate(90 278 180)">REACH</text>
+    </svg>
+  </div>
+</header>
+
+<section class="wrap">
+  <div class="eyebrow">Fields of work</div>
+  <h2>Where the repos point</h2>
+  <div class="interests">
+    <div class="interest">
+      <div class="num">01</div>
+      <h3>Manipulation &amp; cobots</h3>
+      <p>Programming a UR3 arm and Robotiq 85 gripper to take instructions from RViz and the terminal alike.</p>
+    </div>
+    <div class="interest">
+      <div class="num">02</div>
+      <h3>Computer vision</h3>
+      <p>Training object detection inside NVIDIA Isaac Sim, then handing what it sees to a Jetbot to drive on.</p>
+    </div>
+    <div class="interest">
+      <div class="num">03</div>
+      <h3>Neural nets, from scratch</h3>
+      <p>Writing forward and backward propagation by hand in C++ — no framework standing between the math and the data.</p>
+    </div>
+    <div class="interest">
+      <div class="num">04</div>
+      <h3>AI agents</h3>
+      <p>Working through Google's applied agent-building curriculum on Kaggle, one capstone at a time.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="eyebrow">Pinned</div>
+  <h2>A few projects worth a look</h2>
+  <div class="projects">
+    <a class="project" href="https://github.com/trabelsim/UR3_with_Robotiq_gripper_85" target="_blank" rel="noopener">
+      <div class="info">
+        <h3>UR3_with_Robotiq_gripper_85</h3>
+        <p>Full control stack for a UR3 cobot and Robotiq 85 gripper, driven from RViz or straight from the terminal.</p>
+      </div>
+      <div class="tag">Python</div>
+      <div class="stars">★ 14</div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="project" href="https://github.com/trabelsim/isaacSimJetbotObjDet" target="_blank" rel="noopener">
+      <div class="info">
+        <h3>isaacSimJetbotObjDet</h3>
+        <p>Object detection for a Jetbot controller, trained and tested inside NVIDIA Isaac Sim.</p>
+      </div>
+      <div class="tag">Jupyter Notebook</div>
+      <div class="stars">★ 4</div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="project" href="https://github.com/trabelsim/NNClassificationCpp" target="_blank" rel="noopener">
+      <div class="info">
+        <h3>NNClassificationCpp</h3>
+        <p>A neural network built from the ground up in C++ to classify a spiral dataset — forward and backward propagation, no shortcuts.</p>
+      </div>
+      <div class="tag">C++</div>
+      <div class="stars"> </div>
+      <div class="arrow">→</div>
+    </a>
+    <a class="project" href="https://github.com/trabelsim/kaggle_google" target="_blank" rel="noopener">
+      <div class="info">
+        <h3>kaggle_google</h3>
+        <p>Capstone project for Google's 5-day AI Agents intensive, run on Kaggle.</p>
+      </div>
+      <div class="tag">HTML</div>
+      <div class="stars"> </div>
+      <div class="arrow">→</div>
+    </a>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="badges">
+    <div class="badge">
+      <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M3 15c4 3 14 3 18 0-2 4-6 6-9 6s-7-2-9-6z"/><path d="M7 15c0-5 3-10 7-11 1 4-1 8-3 11"/></svg>
+      Pull Shark
+    </div>
+    <div class="badge">
+      <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z"/></svg>
+      Quickdraw
+    </div>
+    <div class="badge">
+      <svg viewBox="0 0 24 24" stroke-width="1.6"><path d="M12 2v20M4 7l16 10M20 7 4 17M2 12h20" /></svg>
+      Arctic Code Vault Contributor
+    </div>
+  </div>
+  <div class="cta">
+    <a href="https://github.com/trabelsim" target="_blank" rel="noopener">See all 21 repositories →</a>
+    <div class="fine">// updated 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>
